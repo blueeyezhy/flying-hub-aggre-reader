@@ -5,7 +5,7 @@ services:
     image: 'dockerhub.qingcloud.com/pressone/aggre_reader'
     command: bash -c "cd server && yarn start-prod"
     ports:
-      - '9090:9000'
+      - '9001:9000'
     volumes:
       - ./config/config.reader.js:/app/server/config.js:ro
       - ./config/config.reader-wallet.js:/app/server/config.wallet.js
