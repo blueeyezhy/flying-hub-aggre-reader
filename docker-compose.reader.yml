@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  reader:
+    image: 'dockerhub.qingcloud.com/pressone/aggre_reader'
+    command: bash -c "cd server && yarn start-prod"
+    ports:
+      - '9090:9000'
+    volumes:
+      - ./config/config.reader.js:/app/server/config.js:ro
+      - ./config/config.reader-wallet.js:/app/server/config.wallet.js
+    restart: 'always'
+    depends_on:
+      - postgres
+      - redis
+
+  reader-queue:
+    image: 'dockerhub.qingcloud.com/pressone/aggre_reader'
+    command: bash -c "cd server && yarn start-queue-prod"
+    volumes:
+      - ./config/config.reader.js:/app/server/config.js:ro
+      - ./config/config.reader-wallet.js:/app/server/config.wallet.js
+    restart: 'always'
+    depends_on:
+      - postgres
+      - redis

@@ -1,0 +1,49 @@
+version: '3'
+
+services:
+  atom:
+    image: dockerhub.qingcloud.com/pressone/atom
+    env_file:
+      - ./config/atom.env
+    volumes:
+      - './config/Settings.toml:/app/Settings.toml'
+    command: sh -c "/wait-for postgres:5432 -- diesel migration run && /app/atom syncserver"
+    restart: always
+    depends_on:
+      - postgres
+
+  atom_web:
+    image: dockerhub.qingcloud.com/pressone/atom
+    env_file:
+      - ./config/atom.env
+    volumes:
+      - './config/Settings.toml:/app/Settings.toml'
+    command: sh -c "/wait-for postgres:5432 -- diesel migration run && /app/atom web"
+    ports:
+      - 7071:7070
+    restart: always
+    depends_on:
+      - postgres
+
+  postgres:
+    image: dockerhub.qingcloud.com/pressone/postgres
+    hostname: postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - ./pg-init-scripts:/docker-entrypoint-initdb.d
+      - ./postgresql:/var/lib/postgresql/data
+    environment:
+      POSTGRES_MULTIPLE_DATABASES: aggregator, aggre_reader, aggre_reader_wallet
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 39f12851f5275222e8b50fddddf04ee4
+
+
+  redis:
+    image: 'dockerhub.qingcloud.com/pressone/redis:alpine'
+    ports:
+      - '6379:6379'
+    command: redis-server --requirepass a863a35d270fceb110f96374d75c219f --appendonly yes
+    volumes:
+      - './redis:/data'
+    restart: 'always'
