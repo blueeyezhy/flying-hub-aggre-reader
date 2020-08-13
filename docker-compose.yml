@@ -34,7 +34,7 @@ services:
       - ./pg-init-scripts:/docker-entrypoint-initdb.d
       - ./postgresql:/var/lib/postgresql/data
     environment:
-      POSTGRES_MULTIPLE_DATABASES: aggregator, aggre_reader, aggre_reader_wallet
+      POSTGRES_MULTIPLE_DATABASES: aggregator, aggre_reader, aggre_reader_wallet 
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 39f12851f5275222e8b50fddddf04ee4
 
@@ -47,3 +47,32 @@ services:
     volumes:
       - './redis:/data'
     restart: 'always'
+
+
+  reader:
+    image: 'dockerhub.qingcloud.com/pressone/aggre_reader'
+    command: bash -c "cd server && yarn start-prod"
+    ports:
+      - '9001:9000'
+    volumes:
+      - ./config/config.reader.js:/app/server/config.js:ro
+      - ./config/config.reader-wallet.js:/app/server/config.wallet.js
+    restart: 'always'
+    depends_on:
+      - postgres
+      - redis
+      - atom
+      - atom_web
+
+  reader-queue:
+    image: 'dockerhub.qingcloud.com/pressone/aggre_reader'
+    command: bash -c "cd server && yarn start-queue-prod"
+    volumes:
+      - ./config/config.reader.js:/app/server/config.js:ro
+      - ./config/config.reader-wallet.js:/app/server/config.wallet.js
+    restart: 'always'
+    depends_on:
+      - postgres
+      - redis
+      - atom
+      - atom_web
