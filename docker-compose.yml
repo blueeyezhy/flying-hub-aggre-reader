@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-  atom:
+  aggre_atom:
     image: dockerhub.qingcloud.com/pressone/atom
     env_file:
       - ./config/atom.env
@@ -12,7 +12,7 @@ services:
     depends_on:
       - postgres
 
-  atom_web:
+  aggre_atom_web:
     image: dockerhub.qingcloud.com/pressone/atom
     env_file:
       - ./config/atom.env
@@ -25,31 +25,20 @@ services:
     depends_on:
       - postgres
 
-  postgres:
-    image: dockerhub.qingcloud.com/pressone/postgres
-    hostname: postgres
-    ports:
-      - 5432:5432
-    volumes:
-      - ./pg-init-scripts:/docker-entrypoint-initdb.d
-      - ./postgresql:/var/lib/postgresql/data
-    environment:
-      POSTGRES_MULTIPLE_DATABASES: aggregator, aggre_reader, aggre_reader_wallet 
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 39f12851f5275222e8b50fddddf04ee4
+  # postgres:
+  #   image: dockerhub.qingcloud.com/pressone/postgres
+  #   hostname: postgres
+  #   ports:
+  #     - 5432:5432
+  #   volumes:
+  #     - ./pg-init-scripts:/docker-entrypoint-initdb.d
+  #     - ./postgresql:/var/lib/postgresql/data
+  #   environment:
+  #     POSTGRES_MULTIPLE_DATABASES: aggregator, aggre_reader, aggre_reader_wallet 
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_PASSWORD: 39f12851f5275222e8b50fddddf04ee4
 
-
-  redis:
-    image: 'dockerhub.qingcloud.com/pressone/redis:alpine'
-    ports:
-      - '6379:6379'
-    command: redis-server --requirepass a863a35d270fceb110f96374d75c219f --appendonly yes
-    volumes:
-      - './redis:/data'
-    restart: 'always'
-
-
-  reader:
+  aggre_reader:
     image: 'dockerhub.qingcloud.com/pressone/aggre_reader'
     command: bash -c "cd server && yarn start-prod"
     ports:
@@ -61,10 +50,10 @@ services:
     depends_on:
       - postgres
       - redis
-      - atom
-      - atom_web
+      - aggre_atom
+      - aggre_atom_web
 
-  reader-queue:
+  aggre_reader-queue:
     image: 'dockerhub.qingcloud.com/pressone/aggre_reader'
     command: bash -c "cd server && yarn start-queue-prod"
     volumes:
@@ -74,5 +63,5 @@ services:
     depends_on:
       - postgres
       - redis
-      - atom
-      - atom_web
+      - aggre_atom
+      - aggre_atom_web
