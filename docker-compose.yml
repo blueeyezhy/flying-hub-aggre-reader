@@ -1,5 +1,10 @@
 version: '3'
 
+networks:
+  aggrenetwork:
+    external:
+      name: flying-pub_default
+
 services:
   aggre_atom:
     image: dockerhub.qingcloud.com/pressone/atom
@@ -9,8 +14,10 @@ services:
       - './config/Settings.toml:/app/Settings.toml'
     command: sh -c "/wait-for postgres:5432 -- diesel migration run && /app/atom syncserver"
     restart: always
+    networks: aggrenetwork
     # depends_on:
       # - postgres
+
 
   aggre_atom_web:
     image: dockerhub.qingcloud.com/pressone/atom
@@ -22,6 +29,7 @@ services:
     ports:
       - 7071:7070
     restart: always
+    networks: aggrenetwork
     # depends_on:
       # - postgres
 
@@ -47,6 +55,7 @@ services:
       - ./config/config.reader.js:/app/server/config.js:ro
       - ./config/config.reader-wallet.js:/app/server/config.wallet.js
     restart: 'always'
+    networks: aggrenetwork
     depends_on:
       # - postgres
       # - redis
@@ -60,6 +69,7 @@ services:
       - ./config/config.reader.js:/app/server/config.js:ro
       - ./config/config.reader-wallet.js:/app/server/config.wallet.js
     restart: 'always'
+    networks: aggrenetwork
     depends_on:
       # - postgres
       # - redis
