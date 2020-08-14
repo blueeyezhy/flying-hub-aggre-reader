@@ -1,1 +1,4 @@
 postgresql
+
+/config/config.reader.js
+/config/config.reader-wallet.js
