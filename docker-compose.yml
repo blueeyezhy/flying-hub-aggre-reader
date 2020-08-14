@@ -10,7 +10,7 @@ services:
     command: sh -c "/wait-for postgres:5432 -- diesel migration run && /app/atom syncserver"
     restart: always
     depends_on:
-      - postgres
+      # - postgres
 
   aggre_atom_web:
     image: dockerhub.qingcloud.com/pressone/atom
@@ -23,7 +23,7 @@ services:
       - 7071:7070
     restart: always
     depends_on:
-      - postgres
+      # - postgres
 
   # postgres:
   #   image: dockerhub.qingcloud.com/pressone/postgres
@@ -48,8 +48,8 @@ services:
       - ./config/config.reader-wallet.js:/app/server/config.wallet.js
     restart: 'always'
     depends_on:
-      - postgres
-      - redis
+      # - postgres
+      # - redis
       - aggre_atom
       - aggre_atom_web
 
@@ -61,7 +61,7 @@ services:
       - ./config/config.reader-wallet.js:/app/server/config.wallet.js
     restart: 'always'
     depends_on:
-      - postgres
-      - redis
+      # - postgres
+      # - redis
       - aggre_atom
       - aggre_atom_web
